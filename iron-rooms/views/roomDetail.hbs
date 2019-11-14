@@ -33,7 +33,14 @@
     axios.post("/rooms/{{room._id}}/comment", {
       comment: document.getElementById('comment').value
     }).then(response => {
-      console.log(response);
+      let commentBox = '<h2>Comments</h2>';
+
+      response.data.forEach(comment => {
+        commentBox += `<h4>${comment.author.username}</h4><p>${comment.content}</p>`
+      })
+      document.getElementById("comment-box").innerHTML = commentBox;
+
+      document.getElementById('comment').value = ""
     }).catch(err => {
       console.log(err);
     })

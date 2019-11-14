@@ -121,16 +121,29 @@ router.post("/rooms/:roomId/comment", loginCheck(), (req, res, next) => {
     author: author
   })
     .then(comment => {
-      return Room.updateOne(
+      return Room.findOneAndUpdate(
         { _id: req.params.roomId },
         {
           $push: {
             comments: comment._id
           }
+        },
+        {
+          new: true
         }
-      ).then(() => {
-        res.redirect(`/rooms/${req.params.roomId}`);
-      });
+      )
+        .populate({
+          path: "comments", // populates the `comments` field in the Room
+          populate: {
+            path: "author" // populates the `author` field in the Comment
+          }
+        })
+        .then(room => {
+          res.json(room.comments); // updated comments array
+
+          // send the room's document
+          // res.redirect(`/rooms/${req.params.roomId}`);
+        });
     })
     .catch(err => {
       next(err);
