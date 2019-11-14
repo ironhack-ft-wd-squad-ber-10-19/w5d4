@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const Room = require("../models/Room");
 const User = require("../models/User");
+const Comment = require("../models/Comment");
 
 /* GET home page */
 router.get("/", (req, res) => {
@@ -45,6 +46,12 @@ router.get("/rooms", (req, res, next) => {
 router.get("/rooms/:roomId", loginCheck(), (req, res, next) => {
   Room.findById(req.params.roomId)
     .populate("owner")
+    .populate({
+      path: "comments",
+      populate: {
+        path: "author"
+      }
+    })
     .then(room => {
       res.render("roomDetail.hbs", {
         room: room,
@@ -99,6 +106,31 @@ router.get("/rooms/:roomId/delete", loginCheck(), (req, res, next) => {
   Room.deleteOne(query)
     .then(() => {
       res.redirect("/rooms");
+    })
+    .catch(err => {
+      next(err);
+    });
+});
+
+router.post("/rooms/:roomId/comment", loginCheck(), (req, res, next) => {
+  const content = req.body.comment;
+  const author = req.user._id;
+
+  Comment.create({
+    content: content,
+    author: author
+  })
+    .then(comment => {
+      return Room.updateOne(
+        { _id: req.params.roomId },
+        {
+          $push: {
+            comments: comment._id
+          }
+        }
+      ).then(() => {
+        res.redirect(`/rooms/${req.params.roomId}`);
+      });
     })
     .catch(err => {
       next(err);

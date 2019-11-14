@@ -9,3 +9,18 @@
 {{/if}}
 
 <a href="/rooms">View other rooms</a>
+
+<div id="comment-box">
+  {{#if room.comments}}
+  <h2>Comments</h2>
+  {{/if}}
+  {{#each room.comments}}
+  <h4>{{author.username}}</h4>
+  <p>{{content}}</p>
+  {{/each}}
+</div>
+
+<form action="/rooms/{{room._id}}/comment" method="post">
+  <label for="comment">Add a comment</label>
+  <input type="text" name="comment" id="comment">
+</form>
