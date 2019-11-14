@@ -1,0 +1,11 @@
+<h2>{{room.name}}</h2>
+<h3>Price (per night): {{room.price}}</h3>
+<p>Description: {{room.description}}</p>
+<p>Owner: {{room.owner.username}}</p>
+<a href="/rooms/user/{{room.owner._id}}">View more rooms from this user</a>
+
+{{#if showDelete}}
+<a href="/rooms/{{room._id}}/delete">Delete this room ❌</a>
+{{/if}}
+
+<a href="/rooms">View other rooms</a>

@@ -1,0 +1,17 @@
+<a href="/rooms/new">Post a room</a>
+{{#if user}}
+<a href="/rooms">View all rooms</a>
+{{/if}}
+
+{{#if rooms}}
+<h1>Rooms {{#if user}}from {{user.username}}{{/if}}</h1>
+{{else}}
+<p>No rooms to display!</p>
+{{/if}}
+
+
+{{#each rooms}}
+<div>
+  <a href="/rooms/{{_id}}">{{name}} - {{price}}€</a>
+</div>
+{{/each}}

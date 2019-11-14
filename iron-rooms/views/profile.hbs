@@ -1,0 +1,10 @@
+<h1>Welcome {{user.username}}</h1>
+
+{{#if rooms}}
+<h2>Your rooms</h2>
+{{/if}}
+{{#each rooms}}
+<div>
+  <a href="/rooms/{{_id}}">{{name}} - {{price}}€</a>
+</div>
+{{/each}}
