@@ -45,11 +45,11 @@ router.get("/rooms", (req, res, next) => {
 
 router.get("/rooms/:roomId", loginCheck(), (req, res, next) => {
   Room.findById(req.params.roomId)
-    .populate("owner")
+    .populate("owner") // populates the `owner` field in the Room
     .populate({
-      path: "comments",
+      path: "comments", // populates the `comments` field in the Room
       populate: {
-        path: "author"
+        path: "author" // populates the `author` field in the Comment
       }
     })
     .then(room => {
