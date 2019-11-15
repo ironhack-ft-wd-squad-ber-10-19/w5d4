@@ -1,0 +1,37 @@
+<h2>Map</h2>
+<div id='map' style='width: 400px; height: 300px;'></div>
+<script>
+
+    let coordinates = [{{ room.coordinates }}];
+    const draggable = {{ draggable }}
+
+    if (!coordinates.length) {
+        coordinates = [0, 0]
+    }
+
+    mapboxgl.accessToken = 'pk.eyJ1IjoibWppaCIsImEiOiJjanVwb3p2M2kxczk2M3ptcDRlc2cwYTZpIn0.B8dDJ9aejgRYjjc1hh2w1g';
+    var map = new mapboxgl.Map({
+        container: 'map',
+        style: 'mapbox://styles/mjih/ck2zl2b8205wq1co4hdik26gu',
+        center: coordinates,
+        zoom: 2
+    });
+
+
+
+    var marker = new mapboxgl.Marker({
+        draggable: {{ draggable }}
+  })
+    .setLngLat(coordinates)
+        .addTo(map);
+
+    function onDragEnd() {
+        var lngLat = marker.getLngLat();
+        axios.post('/rooms/{{room._id}}/update', {
+            coordinates: [lngLat.lng, lngLat.lat]
+        });
+        map.flyTo({ center: lngLat })
+    }
+
+    marker.on('dragend', onDragEnd);
+</script>

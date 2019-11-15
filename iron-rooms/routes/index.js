@@ -54,6 +54,7 @@ router.get("/rooms/:roomId", loginCheck(), (req, res, next) => {
     })
     .then(room => {
       res.render("roomDetail.hbs", {
+        layout: false,
         room: room,
         showDelete:
           room.owner._id.toString() === req.user._id.toString() ||
@@ -144,6 +145,21 @@ router.post("/rooms/:roomId/comment", loginCheck(), (req, res, next) => {
           // send the room's document
           // res.redirect(`/rooms/${req.params.roomId}`);
         });
+    })
+    .catch(err => {
+      next(err);
+    });
+});
+
+router.post("/rooms/:roomId/update", loginCheck(), (req, res, next) => {
+  Room.updateOne(
+    { _id: req.params.roomId },
+    {
+      coordinates: req.body.coordinates
+    }
+  )
+    .then(() => {
+      res.json();
     })
     .catch(err => {
       next(err);

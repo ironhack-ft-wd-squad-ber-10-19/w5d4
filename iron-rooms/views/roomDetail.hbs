@@ -1,48 +1,72 @@
-<h2>{{room.name}}</h2>
-<h3>Price (per night): {{room.price}}</h3>
-<p>Description: {{room.description}}</p>
-<p>Owner: {{room.owner.username}}</p>
-<a href="/rooms/user/{{room.owner._id}}">View more rooms from this user</a>
+<!DOCTYPE html>
+<html lang="en">
 
-{{#if showDelete}}
-<a href="/rooms/{{room._id}}/delete">Delete this room ❌</a>
-{{/if}}
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>{{title}}</title>
+  <link rel="stylesheet" href="/stylesheets/style.css" />
 
-<a href="/rooms">View other rooms</a>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 
-<div id="comment-box">
-  {{#if room.comments}}
-  <h2>Comments</h2>
+  <script src='https://api.mapbox.com/mapbox-gl-js/v1.4.1/mapbox-gl.js'></script>
+  <link href='https://api.mapbox.com/mapbox-gl-js/v1.4.1/mapbox-gl.css' rel='stylesheet' />
+
+</head>
+
+<body>
+
+  <h2>{{room.name}}</h2>
+  <h3>Price (per night): {{room.price}}</h3>
+  <p>Description: {{room.description}}</p>
+  <p>Owner: {{room.owner.username}}</p>
+  <a href="/rooms/user/{{room.owner._id}}">View more rooms from this user</a>
+
+  {{#if showDelete}}
+  <a href="/rooms/{{room._id}}/delete">Delete this room ❌</a>
   {{/if}}
-  {{#each room.comments}}
-  <h4>{{author.username}}</h4>
-  <p>{{content}}</p>
-  {{/each}}
-</div>
 
-{{!-- <form action="/rooms/{{room._id}}/comment" method="post"> --}}
-<form id="comment-form">
-  <label for="comment">Add a comment</label>
-  <input type="text" id="comment">
-</form>
+  <a href="/rooms">View other rooms</a>
 
-<script>
-  document.getElementById('comment-form').onsubmit = event => {
-    event.preventDefault(); // prevents the default behaviour of the form
+  {{> map room=room draggable=showDelete }}
 
-    axios.post("/rooms/{{room._id}}/comment", {
-      comment: document.getElementById('comment').value
-    }).then(response => {
-      let commentBox = '<h2>Comments</h2>';
+  <div id="comment-box">
+    {{#if room.comments}}
+    <h2>Comments</h2>
+    {{/if}}
+    {{#each room.comments}}
+    <h4>{{author.username}}</h4>
+    <p>{{content}}</p>
+    {{/each}}
+  </div>
 
-      response.data.forEach(comment => {
-        commentBox += `<h4>${comment.author.username}</h4><p>${comment.content}</p>`
+  {{!-- <form action="/rooms/{{room._id}}/comment" method="post"> --}}
+  <form id="comment-form">
+    <label for="comment">Add a comment</label>
+    <input type="text" id="comment">
+  </form>
+
+  <script>
+    document.getElementById('comment-form').onsubmit = event => {
+      event.preventDefault(); // prevents the default behaviour of the form
+
+      axios.post("/rooms/{{room._id}}/comment", {
+        comment: document.getElementById('comment').value
+      }).then(response => {
+        let commentBox = '<h2>Comments</h2>';
+
+        response.data.forEach(comment => {
+          commentBox += `<h4>${comment.author.username}</h4><p>${comment.content}</p>`
+        })
+        document.getElementById("comment-box").innerHTML = commentBox;
+
+        document.getElementById('comment').value = ""
+      }).catch(err => {
+        console.log(err);
       })
-      document.getElementById("comment-box").innerHTML = commentBox;
+    }
+  </script>
+</body>
 
-      document.getElementById('comment').value = ""
-    }).catch(err => {
-      console.log(err);
-    })
-  }
-</script>
+</html>

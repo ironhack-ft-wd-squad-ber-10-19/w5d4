@@ -14,7 +14,8 @@ const roomSchema = new Schema({
       type: Schema.Types.ObjectId,
       ref: "Comment"
     }
-  ]
+  ],
+  coordinates: [Number]
 });
 
 const Room = mongoose.model("Room", roomSchema);
